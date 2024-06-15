@@ -3,5 +3,7 @@
 <style></style>
 
 <template>
-	<div> </div>
+	<main>
+		<TheInputField />
+	</main>
 </template>
