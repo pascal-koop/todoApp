@@ -1,4 +1,6 @@
 <script setup lang="ts">
+	import { useTodosStore } from '~/store/todos';
+	const todoStore = useTodosStore();
 	const toDoInput = ref<string>('');
 </script>
 
@@ -6,7 +8,7 @@
 
 <template>
 	<input
-		@keydown.enter=""
+		@keydown.enter="todoStore.addTodo(toDoInput)"
 		v-model="toDoInput"
 		type="text"
 		placeholder="Type something here" />
