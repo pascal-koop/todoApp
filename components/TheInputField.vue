@@ -9,14 +9,24 @@
 		title: '',
 		completed: false
 	});
+	const addTodoInStore = (todo: Todo) => {
+		if (todo.title.trim() === '') return;
+		todoStore.addTodo(todo);
+		NewTodo.value = {
+			id: 0,
+			title: '',
+			completed: false
+		};
+	};
 </script>
 
 <style></style>
 
 <template>
-	<input
-		@keydown.enter="addTodo(NewTodo)"
-		v-model="NewTodo.title"
-		type="text"
-		placeholder="Type something here" />
+	<form @keydown.enter.prevent="addTodoInStore(NewTodo)">
+		<input
+			v-model="NewTodo.title"
+			type="text"
+			placeholder="Type something here" />
+	</form>
 </template>
