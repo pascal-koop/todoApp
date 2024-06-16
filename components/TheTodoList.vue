@@ -3,12 +3,17 @@
 	import { storeToRefs } from 'pinia';
 	import SvgIcon from '@jamescoyle/vue-icon';
 	import { mdiClose } from '@mdi/js';
+
 	const todoStore = useTodosStore();
 	const { todos } = storeToRefs(todoStore);
 	const { deleteTodoItem, markTodoAsCompleted, markTodoAsUndone } = todoStore;
-	let isEditing = ref(false);
-	const editTodo = () => {
+
+	const isEditing = ref(false);
+	let editingTodoId = ref(null);
+
+	const editTodo = (id) => {
 		isEditing.value = true;
+		editingTodoId.value = id;
 	};
 
 	const updateTodo = (id, title) => {
@@ -23,15 +28,15 @@
 <template>
 	<div>
 		<!-- all -->
-		<ul class="flex flex-row">
+		<ul class="flex flex-col">
 			<li
-				@dblclick="editTodo()"
+				@dblclick="editTodo(todo.id)"
 				v-for="todo in todos"
 				:class="{ 'line-through': todo.completed }"
 				:key="todo.id"
-				class="flex flex-row">
+				class="flex">
 				<input
-					v-if="isEditing"
+					v-if="isEditing && todo.id === editingTodoId"
 					type="text"
 					v-model="todo.title"
 					@keyup.enter="updateTodo(todo.id, todo.title)" />
@@ -51,7 +56,9 @@
 						id="check-round01"
 						v-model="todo.completed" />
 				</button>
-				<span v-if="!isEditing">{{ todo.title }}</span>
+				<span v-if="!isEditing || todo.id !== editingTodoId">{{
+					todo.title
+				}}</span>
 				<button
 					class="h-1"
 					@click="deleteTodoItem(todo.id)"

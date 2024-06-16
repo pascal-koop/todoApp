@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import type { Todo } from '~/types/todo'
-
+import axios from 'axios'
 export const useTodosStore = defineStore('todos', ()=> {
   const todos = ref<Todo[]>([]) // Provide the correct type for the 'todos' array
   const addTodo = (Newtodo: Todo) => {
@@ -36,6 +36,14 @@ export const useTodosStore = defineStore('todos', ()=> {
       todos.value[index].title = title
     }
   }
-  return { todos, addTodo, deleteTodoItem, markTodoAsCompleted, markTodoAsUndone, updateTodo }
+  const fetchTodosFromMockAPI = async () => {
+    try {
+      const response = await axios.get('https://jsonplaceholder.typicode.com/todos')
+      todos.value = response.data.slice(0, 5)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+  return { todos, addTodo, deleteTodoItem, markTodoAsCompleted, markTodoAsUndone, updateTodo, fetchTodosFromMockAPI }
 
 })
