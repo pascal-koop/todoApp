@@ -8,6 +8,27 @@ export const useTodosStore = defineStore('todos', ()=> {
     todos.value.push({ ...Newtodo })
     console.log(todos.value)
   }
-  return { todos, addTodo }
+
+  const deleteTodoItem = (id: number) => {
+    const index = todos.value.findIndex((todo) => todo.id === id)
+    if (index !== -1) {
+      todos.value.splice(index, 1)
+    }
+  }
+
+  const markTodoAsCompleted = (id: number) => {
+    const index = todos.value.findIndex((todo) => todo.id === id)
+    if (index !== -1) {
+      todos.value[index].completed = true
+    }
+  }
+
+  const markTodoAsUndone = (id: number) => {
+    const index = todos.value.findIndex((todo) => todo.id === id)
+    if (index !== -1) {
+      todos.value[index].completed = false
+    }
+  }
+  return { todos, addTodo, deleteTodoItem, markTodoAsCompleted, markTodoAsUndone }
 
 })

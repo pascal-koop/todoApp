@@ -5,5 +5,6 @@
 <template>
 	<main>
 		<TheInputField />
+		<TheTodoList />
 	</main>
 </template>
