@@ -29,6 +29,13 @@ export const useTodosStore = defineStore('todos', ()=> {
       todos.value[index].completed = false
     }
   }
-  return { todos, addTodo, deleteTodoItem, markTodoAsCompleted, markTodoAsUndone }
+
+  const updateTodo = (id: number, title: string) => {
+    const index = todos.value.findIndex((todo) => todo.id === id)
+    if (index !== -1) {
+      todos.value[index].title = title
+    }
+  }
+  return { todos, addTodo, deleteTodoItem, markTodoAsCompleted, markTodoAsUndone, updateTodo }
 
 })
