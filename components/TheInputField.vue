@@ -1,16 +1,22 @@
 <script setup lang="ts">
 	import { useTodosStore } from '~/store/todos';
+	import type { Todo } from '~/types/todo';
 	const todoStore = useTodosStore();
 	const { addTodo } = todoStore;
-	const toDoInput = ref<string>('');
+
+	const NewTodo = ref<Todo>({
+		id: 0,
+		title: '',
+		completed: false
+	});
 </script>
 
 <style></style>
 
 <template>
 	<input
-		@keydown.enter="addTodo(toDoInput)"
-		v-model="toDoInput"
+		@keydown.enter="addTodo(NewTodo)"
+		v-model="NewTodo.title"
 		type="text"
 		placeholder="Type something here" />
 </template>
