@@ -42,8 +42,9 @@
 					@keyup.enter="updateTodo(todo.id, todo.title)" />
 				<button
 					v-if="!todo.completed"
-					@click="markTodoAsCompleted(todo.id)"
-					><input
+					@click="markTodoAsCompleted(todo.id)">
+					<input
+						v-show="!isEditing || todo.id !== editingTodoId"
 						type="checkbox"
 						id="check-round01"
 						v-model="todo.completed"
