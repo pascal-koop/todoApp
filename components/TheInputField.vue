@@ -10,7 +10,8 @@
 		completed: false
 	});
 	const addTodoInStore = (todo: Todo) => {
-		if (todo.title.trim() === '') return;
+		if (todo.title === '') return;
+		todo.title = todo.title.trim();
 		todoStore.addTodo(todo);
 		NewTodo.value = {
 			id: 0,
