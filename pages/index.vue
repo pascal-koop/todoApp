@@ -9,7 +9,6 @@
 
 <template>
 	<NuxtLayout>
-		<TheInputField />
 		<TheTodoList />
 	</NuxtLayout>
 </template>

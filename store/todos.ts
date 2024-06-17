@@ -4,11 +4,13 @@ import axios from 'axios'
 export const useTodosStore = defineStore('todos', ()=> {
   const todos = ref<Todo[]>([])
   const isLoading = ref<boolean>(false)
+  const itemCount = ref<number>(todos.value.length)
 
   const addTodo = async(Newtodo: Todo) => {
     Newtodo.id = Math.floor(Math.random() * 10000)
     todos.value.push({ ...Newtodo })
     isLoading.value = true
+
     sendItemToAPI(Newtodo)
   }
 
@@ -16,6 +18,7 @@ export const useTodosStore = defineStore('todos', ()=> {
     const index = todos.value.findIndex((todo) => todo.id === id)
     if (index !== -1) {
       todos.value.splice(index, 1)
+
     }
   }
 
@@ -43,6 +46,7 @@ export const useTodosStore = defineStore('todos', ()=> {
     try {
       const response = await axios.get('https://jsonplaceholder.typicode.com/todos')
       todos.value = response.data.slice(0, 5)
+      itemCount.value = todos.value.length
     } catch (error) {
       console.error(error)
     }
@@ -75,6 +79,7 @@ export const useTodosStore = defineStore('todos', ()=> {
   return {
     todos,
     isLoading,
+    itemCount,
     addTodo,
     deleteTodoItem,
     markTodoAsCompleted,

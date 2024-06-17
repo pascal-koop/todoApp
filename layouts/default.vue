@@ -1,7 +1,10 @@
 <template>
-	<main>
-		<slot />
-	</main>
+	<section>
+		<TheInputField />
+		<main>
+			<slot />
+		</main>
+	</section>
 	<footer>
 		<TheFooter />
 	</footer>
