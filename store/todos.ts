@@ -42,6 +42,14 @@ export const useTodosStore = defineStore('todos', ()=> {
       todos.value[index].title = title
     }
   }
+
+  const getCompletedTodos = () => {
+    return todos.value.filter((todo) => todo.completed === true)
+  }
+
+  const getActiveTodos = () => {
+    return todos.value.filter((todo) => todo.completed === false)
+  }
   const fetchTodosFromMockAPI = async () => {
     try {
       const response = await axios.get('https://jsonplaceholder.typicode.com/todos')
@@ -85,6 +93,8 @@ export const useTodosStore = defineStore('todos', ()=> {
     markTodoAsCompleted,
     markTodoAsUndone,
     updateTodo,
+    getCompletedTodos,
+    getActiveTodos,
     fetchTodosFromMockAPI
   }
 });
