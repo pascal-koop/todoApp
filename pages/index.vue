@@ -8,8 +8,8 @@
 <style></style>
 
 <template>
-	<main>
+	<NuxtLayout>
 		<TheInputField />
 		<TheTodoList />
-	</main>
+	</NuxtLayout>
 </template>
