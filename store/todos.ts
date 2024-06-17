@@ -2,11 +2,14 @@ import { defineStore } from 'pinia'
 import type { Todo } from '~/types/todo'
 import axios from 'axios'
 export const useTodosStore = defineStore('todos', ()=> {
-  const todos = ref<Todo[]>([]) // Provide the correct type for the 'todos' array
-  const addTodo = (Newtodo: Todo) => {
+  const todos = ref<Todo[]>([])
+  const isLoading = ref<boolean>(false)
+
+  const addTodo = async(Newtodo: Todo) => {
     Newtodo.id = Math.floor(Math.random() * 10000)
     todos.value.push({ ...Newtodo })
-    console.log(todos.value)
+    isLoading.value = true
+    sendItemToAPI(Newtodo)
   }
 
   const deleteTodoItem = (id: number) => {
@@ -44,6 +47,39 @@ export const useTodosStore = defineStore('todos', ()=> {
       console.error(error)
     }
   }
-  return { todos, addTodo, deleteTodoItem, markTodoAsCompleted, markTodoAsUndone, updateTodo, fetchTodosFromMockAPI }
+  const sendItemToAPI =  (item: Todo) => {
+    axios.post('https://jsonplaceholder.typicode.com/todos')
+    .then((response) => {
+      if (response.status === 201) {
+        isLoading.value = false
+      }
+    }).catch((error) => {
 
-})
+      isLoading.value = false
+      if(error.response.status === 500){
+        throw createError({
+          statusCode: 500,
+          statusMessage: 'Failed to add todo item'
+          })
+      }
+
+      if(error.response.status === 404){
+        throw createError({
+          statusCode: 404,
+          statusMessage: 'Failed to add todo item'
+      })}
+      })
+
+  }
+
+  return {
+    todos,
+    isLoading,
+    addTodo,
+    deleteTodoItem,
+    markTodoAsCompleted,
+    markTodoAsUndone,
+    updateTodo,
+    fetchTodosFromMockAPI
+  }
+});
