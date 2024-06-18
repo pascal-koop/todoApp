@@ -1,97 +1,72 @@
 import { defineStore } from 'pinia'
 import type { Todo } from '~/types/todo'
-import axios from 'axios'
+import axios from 'axios'/*  eslint regeln rein regeln raus einfach in root eslint rein cura magnolia prettier rein */
+
 export const useTodosStore = defineStore('todos', ()=> {
   const todos = ref<Todo[]>([])
-  const isLoading = ref<boolean>(false)
-  const itemCount = ref<number>(todos.value.length)
+  const itemCount = computed(() => todos.value.length)
 
-  const addTodo = async(Newtodo: Todo) => {
-    Newtodo.id = Math.floor(Math.random() * 10000)
-    todos.value.push({ ...Newtodo })
-    isLoading.value = true
+  const getCompletedTodos = computed(() => todos.value.filter((todo) => todo.completed === true))
+  const getActiveTodos = computed(() => todos.value.filter((todo) => todo.completed === false))
 
-    sendItemToAPI(Newtodo)
-  }
-
-  const deleteTodoItem = (id: number) => {
-    const index = todos.value.findIndex((todo) => todo.id === id)
-    if (index !== -1) {
-      todos.value.splice(index, 1)
-
-    }
-  }
-
-  const markTodoAsCompleted = (id: number) => {
-    const index = todos.value.findIndex((todo) => todo.id === id)
-    if (index !== -1) {
-      todos.value[index].completed = true
-    }
-  }
-
-  const markTodoAsUndone = (id: number) => {
-    const index = todos.value.findIndex((todo) => todo.id === id)
-    if (index !== -1) {
-      todos.value[index].completed = false
-    }
-  }
-
-  const updateTodo = (id: number, title: string) => {
-    const index = todos.value.findIndex((todo) => todo.id === id)
-    if (index !== -1) {
-      todos.value[index].title = title
-    }
-  }
-
-  const getCompletedTodos = () => {
-    return todos.value.filter((todo) => todo.completed === true)
-  }
-
-  const getActiveTodos = () => {
-    return todos.value.filter((todo) => todo.completed === false)
-  }
-  const fetchTodosFromMockAPI = async () => {
+  const addTodo = async(newTodo: Todo) => {
     try {
-      const response = await axios.get('https://jsonplaceholder.typicode.com/todos')
-      todos.value = response.data.slice(0, 5)
-      itemCount.value = todos.value.length
+      const response = await axios.post('https://jsonplaceholder.typicode.com/todos', newTodo)
+      todos.value.push(response.data)
+      return response
+    } catch (error) {
+      console.error(error)
+      return error
+    }
+  }
+
+  const deleteTodoItem = async (todoId: Todo['id']) => {
+    try {
+      await axios.delete(`https://jsonplaceholder.typicode.com/todos/${todoId}`)
+      const index = todos.value.findIndex((todo) => todo.id === todoId)
+      if (index !== -1) {
+        todos.value.splice(index, 1)
+      }
     } catch (error) {
       console.error(error)
     }
   }
-  const sendItemToAPI =  (item: Todo) => {
-    axios.post('https://jsonplaceholder.typicode.com/todos')
-    .then((response) => {
-      if (response.status === 201) {
-        isLoading.value = false
-      }
-    }).catch((error) => {
 
-      isLoading.value = false
-      if(error.response.status === 500){
-        throw createError({
-          statusCode: 500,
-          statusMessage: 'Failed to add todo item'
-          })
-      }
+  const toggleTodoCompleted = (id: number) => {
+    // TODO: WIP API Toggle
+    const index = todos.value.findIndex((todo) => todo.id === id)
+    if (index !== -1) {
+      todos.value[index].completed = !todos.value[index].completed
+    }
+  }
 
-      if(error.response.status === 404){
-        throw createError({
-          statusCode: 404,
-          statusMessage: 'Failed to add todo item'
-      })}
-      })
+  const updateTodo = async (todoItem: Todo) => {
+    try {
+      await axios.patch(`https://jsonplaceholder.typicode.com/todos/${todoItem.id}`, todoItem)
+      const index = todos.value.findIndex((todo) => todo.id === todoItem.id)
+    if (index !== -1) {
+      todos.value[index].title = todoItem.title
+    }
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
+  const fetchTodosFromMockAPI = async () => {
+    try {
+      const response = await axios.get('https://jsonplaceholder.typicode.com/todos')
+      todos.value = response.data.slice(0, 5)
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   return {
     todos,
-    isLoading,
     itemCount,
     addTodo,
     deleteTodoItem,
-    markTodoAsCompleted,
-    markTodoAsUndone,
+    toggleTodoCompleted,
     updateTodo,
     getCompletedTodos,
     getActiveTodos,

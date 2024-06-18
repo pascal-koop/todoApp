@@ -1,9 +1,17 @@
-<script setup></script>
+<script setup>
+	defineProps({
+		isLoading: {
+			type: Boolean,
+			default: false
+		}
+	});
+</script>
 
 <style></style>
 
 <template>
 	<svg
+		v-if="isLoading"
 		class="text-gray-300 animate-spin"
 		viewBox="0 0 64 64"
 		fill="none"

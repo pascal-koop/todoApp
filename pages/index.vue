@@ -4,6 +4,6 @@
 
 <template>
 	<NuxtLayout>
-		<TheTodoList />
+		<TheTodoApp />
 	</NuxtLayout>
 </template>
