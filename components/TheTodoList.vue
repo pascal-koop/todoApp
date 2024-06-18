@@ -1,75 +1,44 @@
 <script setup>
 	import { useTodosStore } from '~/store/todos';
 	import { storeToRefs } from 'pinia';
-	import SvgIcon from '@jamescoyle/vue-icon';
-	import { mdiClose } from '@mdi/js';
+	import { defineProps } from 'vue';
 
-	const todoStore = useTodosStore();
-	const { todos } = storeToRefs(todoStore);
-	const { deleteTodoItem, markTodoAsCompleted, markTodoAsUndone } = todoStore;
+	const props = defineProps({
+		filterItemsBy: 'all' | 'active' | 'completed'
+	});
 
-	const isEditing = ref(false);
-	let editingTodoId = ref(null);
+	const showFilteredTodos = computed(() => {
+		if (props.filterItemsBy === 'active') {
+			return getActiveTodos.value;
+		} else if (props.filterItemsBy === 'completed') {
+			return getCompletedTodos.value;
+		} else {
+			return todos.value;
+		}
+	});
 
-	const editTodo = (id) => {
-		isEditing.value = true;
-		editingTodoId.value = id;
-	};
+	const { fetchTodosFromMockAPI } = useTodosStore();
 
-	const updateTodo = (id, title) => {
-		todoStore.updateTodo(id, title);
-		isEditing.value = false;
-	};
-	const path = mdiClose;
+	const { todos, getActiveTodos, getCompletedTodos } = storeToRefs(
+		useTodosStore()
+	);
+
+	onMounted(() => {
+		fetchTodosFromMockAPI();
+	});
 </script>
 
 <style></style>
 
 <template>
 	<div>
-		<!-- all -->
 		<ul class="flex flex-col">
-			<li
-				@dblclick="editTodo(todo.id)"
-				v-for="todo in todos"
-				:class="{ 'line-through': todo.completed }"
+			<TheTodoItem
+				v-for="todo in showFilteredTodos"
+				:class="{ 'line-through decoration-2': todo.completed }"
 				:key="todo.id"
-				class="flex">
-				<input
-					v-if="isEditing && todo.id === editingTodoId"
-					type="text"
-					v-model="todo.title"
-					@keyup.enter="updateTodo(todo.id, todo.title)" />
-				<button
-					v-if="!todo.completed"
-					@click="markTodoAsCompleted(todo.id)">
-					<input
-						v-show="!isEditing || todo.id !== editingTodoId"
-						type="checkbox"
-						id="check-round01"
-						v-model="todo.completed"
-				/></button>
-				<button
-					v-else
-					@click="markTodoAsUndone(todo.id)">
-					<input
-						type="checkbox"
-						id="check-round01"
-						v-model="todo.completed" />
-				</button>
-				<span v-if="!isEditing || todo.id !== editingTodoId">{{
-					todo.title
-				}}</span>
-				<button
-					class="h-1"
-					@click="deleteTodoItem(todo.id)"
-					><svg-icon
-						height="20"
-						width="20"
-						type="mdi"
-						:path="path"></svg-icon
-				></button>
-			</li>
+				:todo="todo">
+			</TheTodoItem>
 		</ul>
 	</div>
 </template>

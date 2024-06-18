@@ -1,4 +1,5 @@
 <script setup>
+	//! WIP - This is not yet implemented
 	import { useTodosStore } from '~/store/todos';
 	import { storeToRefs } from 'pinia';
 	const todoStore = useTodosStore();
@@ -21,10 +22,5 @@
 <template>
 	<div>
 		<span>{{ itemsLeft }} {{ pluralLabel }} left</span>
-		<ul>
-			<li><RouterLink to="/">All</RouterLink></li>
-			<li><RouterLink to="/active">Active</RouterLink></li>
-			<li><RouterLink to="/completed">Completed</RouterLink></li>
-		</ul>
 	</div>
 </template>
